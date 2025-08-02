@@ -1,0 +1,61 @@
+
+# 📖 NGINX Configuration Installation Guide
+
+## Service Information:
+- Service name: frontend
+- Technology: React SPA
+- Internal address: frontend:3000
+- Access path: https://yourdomain.com/frontend/
+
+## Installation Steps:
+
+### 1. Find nginx.conf file
+```bash
+# Usually located in one of these paths:
+/etc/nginx/nginx.conf
+/etc/nginx/sites-available/default
+/usr/local/nginx/conf/nginx.conf
+```
+
+### 2. Edit the file
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
+
+### 3. Add location block
+Inside the `server {` section, add this code:
+
+    # frontend - React SPA
+    location /frontend/ {
+        proxy_pass http://frontend:3000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # SPA routing support
+        try_files $uri $uri/ /frontend/index.html;
+    }
+
+### 4. Test configuration
+```bash
+sudo nginx -t
+```
+
+### 5. Apply changes
+```bash
+sudo systemctl reload nginx
+```
+
+## Final test:
+- Browser: https://yourdomain.com/frontend/
+- cURL: curl https://yourdomain.com/frontend/
+
+## Important notes:
+- Make sure frontend service is running on frontend:3000
+- If using SSL, additional configuration may be required
+- For local testing, you can use localhost
+
+## Support:
+- Documentation: HOST_PATTERNS.md
+- Examples: NGINX_EXAMPLES.md
